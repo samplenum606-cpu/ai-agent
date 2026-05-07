@@ -1,0 +1,9 @@
+patient_id,age,blood_pressure,cholesterol,diagnosis,admission_days
+101,58,140,230,Hypertension,7
+102,48,130,210,Diabetes,5
+103,71,160,250,Cardiac,14
+104,34,120,180,Wellness,2
+105,66,150,240,Hypertension,8
+106,57,145,220,Cardiac,10
+107,39,135,190,Diabetes,6
+108,52,155,235,Hypertension,9

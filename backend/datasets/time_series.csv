@@ -1,0 +1,9 @@
+date,value,trend,season
+2024-01-01,110,up,winter
+2024-01-02,113,up,winter
+2024-01-03,109,down,winter
+2024-01-04,115,up,winter
+2024-01-05,120,up,spring
+2024-01-06,117,down,spring
+2024-01-07,122,up,spring
+2024-01-08,125,up,spring
