@@ -1,83 +1,84 @@
 # Autonomous EDA Agent
 
-واجهة تفاعلية لتجربة وكيل تحليل البيانات الذاتية (EDA Agent).
+This project is a locally runnable autonomous exploratory data analysis agent.
 
-## محتويات المشروع
+> Documentation in this README has been written manually for this project.
 
-- `backend/` - الخادم الخلفي المكتوب بـ Python وFastAPI.
-- `frontend/ai-agent/` - واجهة المستخدم المكتوبة بـ React.
+## Project structure
 
-## هل المشروع جاهز؟
+- `backend/` - Python backend using FastAPI.
+- `frontend/ai-agent/` - React frontend.
 
-نعم، المشروع يعمل حالياً ويمكن تشغيله محلياً.
-- الخلفية تستقبل طلبات إلى `/api/agent` و`/api/evaluate`.
-- الواجهة تتصل بالخلفية عبر البروكسي إلى `http://localhost:5000`.
+## What this project does
 
-## متطلبات التشغيل
+- The backend accepts requests at `/api/agent` and `/api/evaluate`.
+- The frontend connects to the backend via proxy at `http://localhost:5000`.
+
+## Requirements
 
 - Python 3.12.x
-- Node.js و npm
+- Node.js and npm
 
-## خطوات التثبيت والتشغيل
+## Installation and running (English)
 
-### 1. تثبيت الخلفية
+### 1. Install backend dependencies
 
-افتح ترمنال في مجلد `backend`:
+Open a terminal in the `backend` folder:
 
-```powershell
-cd d:\project-s\ai-agent\backend
+```cmd
+cd /d d:\project-s\ai-agent\backend
 python -m pip install -r requirements.txt
 ```
 
-### 2. تشغيل الخلفية
+### 2. Run backend
 
-من نفس المجلد:
+From the same folder:
 
-```powershell
+```cmd
 python -m uvicorn main:app --reload --host 127.0.0.1 --port 5000
 ```
 
-إذا نجح، ستجد الخلفية تعمل على:
+If the backend starts successfully, it will be available at:
 
-```
+```text
 http://127.0.0.1:5000
 ```
 
-### 3. تثبيت الواجهة
+### 3. Install frontend dependencies
 
-افتح ترمنال جديد في مجلد `frontend/ai-agent`:
+Open a new terminal in `frontend/ai-agent`:
 
-```powershell
-cd d:\project-s\ai-agent\frontend\ai-agent
+```cmd
+cd /d d:\project-s\ai-agent\frontend\ai-agent
 npm install
 ```
 
-### 4. تشغيل الواجهة
+### 4. Run frontend
 
-من نفس المجلد:
+From the same folder:
 
-```powershell
+```cmd
 npm start
 ```
 
-ثم افتح المتصفح على:
+Then open your browser at:
 
-```
+```text
 http://localhost:3000
 ```
 
-## ملاحظات
+## Notes
 
-- إذا كان منفذ `3000` محجوزاً، ستطلب React اختيار منفذ آخر.
-- إذا واجهت أي خطأ في الاتصال، تأكد أن الخلفية تعمل على `127.0.0.1:5000` قبل فتح الواجهة.
-- يمكنك تشغيل تقييم الأداء من الواجهة عبر زر `تشغيل تقييم الأداء` أو من الخلفية باستخدام:
+- If port `3000` is already used, React will prompt to use another available port.
+- If you experience connection errors, make sure the backend is running at `127.0.0.1:5000`.
+- To run evaluation from the backend directly:
 
-```powershell
-cd d:\project-s\ai-agent\backend
-python -c "from evaluation import run_evaluation; from agent_engine import AgentEngine; engine=AgentEngine(); print(run_evaluation(engine).to_dict())"
+```cmd
+cd /d d:\project-s\ai-agent\backend
+python -c "from evaluation import run_evaluation; from agent_engine import AgentEngine; engine = AgentEngine(); print(run_evaluation(engine).to_dict())"
 ```
 
-## دليل تثبيت وتشغيل بالعربية
+## Guide in Arabic
 
 ### تشغيل الخلفية باستخدام PowerShell
 
@@ -111,32 +112,32 @@ npm install
 npm start
 ```
 
-### كيف تتأكد أن كل شيء يعمل
+### How to verify everything is working
 
-1. افتح المتصفح على `http://localhost:3000`.
-2. يجب أن تكون الواجهة قادرة على الاتصال بالخلفية على `http://127.0.0.1:5000`.
-3. إذا كنت تريد التحقق من الخلفية فقط، افتح:
+1. Open the browser at `http://localhost:3000`.
+2. The frontend should connect to the backend at `http://127.0.0.1:5000`.
+3. To check the backend alone, open:
 
 ```text
 http://127.0.0.1:5000/api/health
 ```
 
-## كيفية استخدام المشروع بعد التشغيل
+## How to use the project after startup
 
-1. افتح الواجهة على `http://localhost:3000`.
-2. في مربع النص الرئيسي، اكتب سؤالاً واضحاً عن تحليل البيانات، مثل:
+1. Open the frontend at `http://localhost:3000`.
+2. In the main input box, type a clear data analysis question, such as:
    - `Summarize sales trends in the sample dataset`
    - `Find correlation between profit and sales`
    - `Analyze missing values and correlations in the marketing dataset`
-3. اضغط زر `تشغيل التحليل`.
-4. ستعرض الواجهة نتيجة التحليل تحت عنوان `النتيجة`.
-5. لتشغيل تقييم الأداء للأمثلة المدمجة، اضغط زر `تشغيل تقييم الأداء`.
+3. Press `Run Analysis`.
+4. The result will appear under the `Result` section.
+5. To run the built-in evaluation, press `Run Evaluation`.
 
-### نصائح لاستخدام أفضل
+### Better usage tips
 
-- إذا أردت اختبار مجموعة بيانات محددة، اذكر اسم `dataset_name` في الطلب أو حدد اسم الملف في الكود الخلفي.
-  - مثال: `Analyze the sample dataset and summarize the main insights. dataset_name=sample`
-  - أو في الطلب البرمجي المباشر إلى API:
+- To test a specific dataset, include `dataset_name` in the prompt or set it in backend code.
+  - Example: `Analyze the sample dataset and summarize the main insights. dataset_name=sample`
+  - Or use the direct API request:
 
 ```json
 {
@@ -144,17 +145,17 @@ http://127.0.0.1:5000/api/health
   "dataset_name": "sample"
 }
 ```
-- إذا كنت تريد تحليلًا عامًّا، استخدم:
+- For a generic analysis prompt, use:
   - `Perform an exploratory data analysis and summarize the main insights.`
-- إذا كانت النتائج تظهر ما يشبه `Strong correlation found...` فهذا يعني أن الوكيل وجد علاقات قوية بين الأرقام.
+- If the result contains `Strong correlation found...`, the agent identified strong numeric relationships.
 
-## بنية المشروع
+## Project files
 
-- `backend/main.py` - نقطة دخول FastAPI.
-- `backend/agent_engine.py` - منطق الوكيل وتحليل البيانات.
-- `backend/schemas.py` - نماذج Pydantic للطلب والاستجابة.
-- `frontend/ai-agent/src/App.js` - واجهة المستخدم.
+- `backend/main.py` - FastAPI entry point.
+- `backend/agent_engine.py` - Agent logic and data analysis.
+- `backend/schemas.py` - Pydantic request and response models.
+- `frontend/ai-agent/src/App.js` - React app.
 
-## إذا أردت تحسينًا إضافياً
+## Optional improvement
 
-يمكن تحسين العرض في الواجهة ليصبح أكثر وضوحاً بدلاً من عرض JSON خام.
+The frontend can be improved to present results in a more user-friendly layout instead of raw JSON.
