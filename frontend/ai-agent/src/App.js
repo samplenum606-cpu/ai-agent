@@ -65,8 +65,12 @@ function App() {
             id="agentPrompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="مثال: حلّل هذا الملف وابحث عن القيم المفقودة والأهم من ذلك..."
+            placeholder="مثال: Summarize sales trends in the sample dataset"
           />
+          <div className="App-help">
+            <p>مثال آخر: <strong>Analyze missing values and correlations in the marketing dataset</strong></p>
+            <p>يمكنك أيضاً إضافة <code>dataset_name=sample</code> في الطلب أو تمرير الاسم عبر JSON عند استخدام API مباشرة.</p>
+          </div>
 
           <button onClick={handleSubmit} disabled={loading || prompt.trim().length === 0}>
             {loading ? 'جارٍ التنفيذ...' : 'تشغيل التحليل'}

@@ -121,6 +121,33 @@ npm start
 http://127.0.0.1:5000/api/health
 ```
 
+## كيفية استخدام المشروع بعد التشغيل
+
+1. افتح الواجهة على `http://localhost:3000`.
+2. في مربع النص الرئيسي، اكتب سؤالاً واضحاً عن تحليل البيانات، مثل:
+   - `Summarize sales trends in the sample dataset`
+   - `Find correlation between profit and sales`
+   - `Analyze missing values and correlations in the marketing dataset`
+3. اضغط زر `تشغيل التحليل`.
+4. ستعرض الواجهة نتيجة التحليل تحت عنوان `النتيجة`.
+5. لتشغيل تقييم الأداء للأمثلة المدمجة، اضغط زر `تشغيل تقييم الأداء`.
+
+### نصائح لاستخدام أفضل
+
+- إذا أردت اختبار مجموعة بيانات محددة، اذكر اسم `dataset_name` في الطلب أو حدد اسم الملف في الكود الخلفي.
+  - مثال: `Analyze the sample dataset and summarize the main insights. dataset_name=sample`
+  - أو في الطلب البرمجي المباشر إلى API:
+
+```json
+{
+  "prompt": "Analyze the sample dataset and summarize the main insights.",
+  "dataset_name": "sample"
+}
+```
+- إذا كنت تريد تحليلًا عامًّا، استخدم:
+  - `Perform an exploratory data analysis and summarize the main insights.`
+- إذا كانت النتائج تظهر ما يشبه `Strong correlation found...` فهذا يعني أن الوكيل وجد علاقات قوية بين الأرقام.
+
 ## بنية المشروع
 
 - `backend/main.py` - نقطة دخول FastAPI.
