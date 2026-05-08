@@ -281,6 +281,34 @@ class AgentEngine:
         insights = result.output.get("insights")
         return bool(insights and any(str(item).strip() for item in insights))
 
+    def is_data_analysis_prompt(self, prompt: str) -> bool:
+        prompt_lower = prompt.lower()
+        data_keywords = [
+            "analyze",
+            "analyse",
+            "analysis",
+            "eda",
+            "data",
+            "dataset",
+            "columns",
+            "rows",
+            "summary",
+            "correlation",
+            "missing",
+            "sales",
+            "profit",
+            "trend",
+            "distribution",
+            "compare",
+            "average",
+            "mean",
+            "total",
+            "count",
+            "statistics",
+            "insight",
+        ]
+        return any(keyword in prompt_lower for keyword in data_keywords)
+
     def build_code(self, prompt: str, dataset_path: str, tool: str) -> str:
         if tool == "sql":
             return textwrap.dedent(
@@ -319,6 +347,23 @@ class AgentEngine:
             missing = df.isna().sum().to_dict()
             description = df.describe(include='all').to_dict()
             correlations = numeric.corr().to_dict()
+            prompt_text = {json.dumps(prompt)}
+            prompt_lower = prompt_text.lower()
+
+            is_trend_request = any(keyword in prompt_lower for keyword in [
+                "trend", "trends", "increase", "decrease", "growth", "decline", "season", "time", "date"
+            ])
+            is_sales_request = any(keyword in prompt_lower for keyword in [
+                "sales", "profit", "revenue", "discount", "margin", "price", "demand"
+            ])
+
+            has_date = "date" in df.columns
+            has_sales_columns = any(col in numeric.columns for col in ["sales", "profit", "revenue", "spend", "impressions", "clicks", "conversions"])
+            if not is_sales_request and has_sales_columns:
+                is_sales_request = True
+            if not is_trend_request and has_date:
+                is_trend_request = True
+
             insights = []
 
             if df.isna().any().any():
@@ -326,17 +371,52 @@ class AgentEngine:
                 insights.append(
                     "Data contains missing values in columns: " + ', '.join(missing_cols)
                 )
+
+            if is_sales_request and "sales" in numeric.columns:
+                total_sales = numeric["sales"].sum()
+                avg_sales = numeric["sales"].mean()
+                insights.append(
+                    f"Total sales are {{total_sales:.2f}} with an average of {{avg_sales:.2f}} per record."
+                )
+            if is_sales_request and "profit" in numeric.columns:
+                total_profit = numeric["profit"].sum()
+                insights.append(
+                    f"Total profit is {{total_profit:.2f}}."
+                )
+
+            if is_trend_request and "date" in df.columns:
+                try:
+                    df["date"] = pd.to_datetime(df["date"], errors="coerce")
+                    if not df["date"].isna().all() and "sales" in df.columns:
+                        df_sorted = df.sort_values("date")
+                        first_sales = df_sorted.iloc[0]["sales"]
+                        last_sales = df_sorted.iloc[-1]["sales"]
+                        direction = "upward" if last_sales > first_sales else "downward" if last_sales < first_sales else "flat"
+                        change = last_sales - first_sales
+                        insights.append(
+                            "Sales show a " + direction + " trend from " + str(df_sorted.iloc[0]["date"].date()) + " to " + str(df_sorted.iloc[-1]["date"].date()) + " with a change of " + f"{{change:.2f}}" + "."
+                        )
+                except Exception:
+                    pass
+
+            if "region" in df.columns and "sales" in df.columns:
+                sales_by_region = df.groupby("region")["sales"].sum().sort_values(ascending=False)
+                if not sales_by_region.empty:
+                    top_region = sales_by_region.index[0]
+                    insights.append(
+                        f"The highest sales region is {{top_region}} with {{sales_by_region.iloc[0]:.2f}}."
+                    )
+
+            high_corr = []
             if not numeric.empty:
-                high_corr = []
                 for x in numeric.columns:
                     for y in numeric.columns:
                         if x != y and abs(correlations.get(x, {{}}).get(y, 0)) >= 0.75:
                             high_corr.append((x, y, correlations[x][y]))
                 if high_corr:
                     corr_str = ', '.join([f'{{x}}/{{y}}={{value:.2f}}' for x, y, value in high_corr])
-                    insights.append(
-                        "Strong correlation found: " + corr_str
-                    )
+                    insights.append("Strong correlation found: " + corr_str)
+
             if not insights:
                 insights.append("No high correlation or missing-value patterns were detected in the sample analysis.")
 
